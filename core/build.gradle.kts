@@ -20,6 +20,17 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }

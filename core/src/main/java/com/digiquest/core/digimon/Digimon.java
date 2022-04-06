@@ -1,4 +1,4 @@
-package com.digiquest.core;
+package com.digiquest.core.digimon;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

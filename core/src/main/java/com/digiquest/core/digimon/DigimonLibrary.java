@@ -1,4 +1,4 @@
-package com.digiquest.core;
+package com.digiquest.core.digimon;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,9 @@ public class DigimonLibrary {
     public static final String RELATIVE_LOCATION = "/digimon_library.json";
 
     private final ObjectMapper objectMapper;
-    private final SpriteLoader spriteLoader;
+    //private final SpriteLoader spriteLoader;
+    private final String userLocation;
+
     @Getter
     private Map<String, Digimon> digimonByNames;
     @Getter
@@ -25,14 +27,25 @@ public class DigimonLibrary {
     @Getter
     private Map<String, String> existingCredits = new HashMap<>();
 
-    public void loadLibrary(InputStream inputStream) {
-        try {
-            List<Digimon> digimon = objectMapper.readValue(inputStream, new TypeReference<>() {});
-            digimonByNames = digimon.stream().collect(Collectors.toMap(d -> d.getName().toLowerCase(), d->d));
-            initializeExistingCredits();
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+    public void initializeLibrary() {
+        File file = new File(userLocation + RELATIVE_LOCATION);
+        if(file.exists()) {
+            try(FileInputStream inputStream = new FileInputStream(file)) {
+                List<Digimon> digimon = objectMapper.readValue(inputStream, new TypeReference<>() {});
+                digimonByNames = digimon.stream().collect(Collectors.toMap(d -> d.getName().toLowerCase(), d->d));
+                initializeExistingCredits();
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
+        } else {
+            initializeEmptyLibrary();
         }
+    }
+
+    public List<Digimon> getSortedDigimon() {
+        return digimonByNames.values().stream()
+                .sorted(Comparator.comparing(Digimon::getName))
+                .collect(Collectors.toList());
     }
 
     public void saveLibrary(OutputStream outputStream) {
