@@ -6,4 +6,6 @@ enum class ScreenType {
     DCOM_LOADING,
     VIEW_DIGIMON,
     BATTLE,
+    EDIT_DIGIMON,
+    BATTLE_SETUP,
 }

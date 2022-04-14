@@ -19,7 +19,6 @@ kotlin {
                 // Needed only for preview.
                 implementation(compose.preview)
                 implementation(project(":core"))
-                implementation("com.github.cfogrady:lib-dcom:0.0.0.1-f961f95")
                 implementation("io.github.microutils:kotlin-logging:2.1.21")
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
             }
@@ -64,3 +63,4 @@ android {
         }
     }
 }
+

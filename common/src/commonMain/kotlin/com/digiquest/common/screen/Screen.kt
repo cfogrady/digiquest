@@ -19,7 +19,9 @@ interface Screen {
                            digimonLibraryScreen: DigimonLibraryScreen,
                            dComLoadingScreen: DComLoadingScreen,
                            digimonViewScreen: DigimonViewScreen,
-                           battleScreen: BattleScreen
+                           battleScreen: BattleScreen,
+                           editDigimonScreen: EditDigimonScreen,
+                           battleSetupScreen : BattleSetupScreen
         ) : Map<ScreenType, Screen> {
             val screenMap = HashMap<ScreenType, Screen>()
             screenMap.put(ScreenType.MAIN_MENU, mainMenuScreen)
@@ -27,11 +29,13 @@ interface Screen {
             screenMap.put(ScreenType.DCOM_LOADING, dComLoadingScreen)
             screenMap.put(ScreenType.VIEW_DIGIMON, digimonViewScreen)
             screenMap.put(ScreenType.BATTLE, battleScreen)
+            screenMap.put(ScreenType.EDIT_DIGIMON, editDigimonScreen)
+            screenMap.put(ScreenType.BATTLE_SETUP, battleSetupScreen)
             return screenMap
         }
 
         @Composable
-        fun LabelText(label: String, value: String, color: Color = MaterialTheme.colors.onBackground, modifier: Modifier = Modifier, fontSize : TextUnit? = null) {
+        fun LabelText(label: String, value: String = "", color: Color = MaterialTheme.colors.onBackground, modifier: Modifier = Modifier, fontSize : TextUnit? = null) {
             val spanStyles = listOf(
                 AnnotatedString.Range(
                     SpanStyle(fontWeight = FontWeight.Bold),

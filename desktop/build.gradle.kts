@@ -20,7 +20,6 @@ compose.desktop {
 dependencies {
     implementation(project(":common"))
     implementation(project(":core"))
-    implementation("com.github.cfogrady:lib-dcom:0.0.0.1-f961f95")
     implementation("com.fazecast:jSerialComm:[2.0.0,3.0.0)")
     implementation("net.harawata:appdirs:1.2.1")
     implementation("io.github.microutils:kotlin-logging:2.1.21")

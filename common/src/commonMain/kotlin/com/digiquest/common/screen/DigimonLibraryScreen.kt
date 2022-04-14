@@ -11,35 +11,59 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.digiquest.common.util.FileChooser
 import com.digiquest.core.digimon.Digimon
 import com.digiquest.core.digimon.DigimonLibrary
+import com.digiquest.core.digimon.SpritePackager
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 
 private val log = KotlinLogging.logger {}
 
-class DigimonLibraryScreen(val digimonLibrary: DigimonLibrary, val capableOfAddingToLibrary: Boolean) : Screen {
+class DigimonLibraryScreen(val digimonLibrary: DigimonLibrary, val capableOfAddingToLibrary: Boolean, val fileChooser: FileChooser, val spritePackager: SpritePackager) : Screen {
     @Composable
     override fun loadScreen(onScreenChange: (ScreenType, Any?) -> Unit, parameter: Any?) {
+        var loadingStatus by remember { mutableStateOf( if(digimonLibrary.isLoaded) LoadingStatus.INITIALIZED else LoadingStatus.UNINITIALIZED) }
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
-            buttons(onScreenChange)
-            library(onScreenChange)
+            buttons(onScreenChange, {loadingStatus = it})
+            library(onScreenChange, loadingStatus, {loadingStatus = it})
         }
 
     }
 
     @Composable
-    fun buttons(onScreenChange: (ScreenType, Any?) -> Unit) {
+    fun buttons(onScreenChange: (ScreenType, Any?) -> Unit, onLoadingStatusChange: (LoadingStatus) -> Unit) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
             Button(onClick = {
                 onScreenChange(ScreenType.MAIN_MENU, null)
             }) {
                 Text("Main Menu")
             }
+            Button(onClick = {
+                val file = fileChooser.getFile("*.dql", true);
+                if(file != null) {
+                    log.info { "File selected: $file" }
+                    digimonLibrary.importLibrary(file, spritePackager).thenRun {
+                        onLoadingStatusChange(LoadingStatus.INITIALIZED)
+                    }
+                    onLoadingStatusChange(LoadingStatus.RELOADING)
+                }
+            }) {
+                Text("Import Library")
+            }
+            Button(onClick = {
+                val file = fileChooser.getFile("*.dql", false);
+                if(file != null) {
+                    log.info { "File selected: $file" }
+                    digimonLibrary.exportLibrary(file, spritePackager)
+                }
+            }) {
+                Text("Export Library")
+            }
             if(capableOfAddingToLibrary) {
                 Button(onClick = {
                     log.info { "Add Digimon Button Clicked" }
-                    //onScreenChange(ScreenType.MAIN_MENU, null)
+                    onScreenChange(ScreenType.EDIT_DIGIMON, EditDigimonScreen.EditDigimonScreenParameter(digimon = null))
                 }) {
                     Text("Add Digimon")
                 }
@@ -48,13 +72,12 @@ class DigimonLibraryScreen(val digimonLibrary: DigimonLibrary, val capableOfAddi
     }
 
     @Composable
-    fun library(onScreenChange: (ScreenType, Any?) -> Unit, ) {
+    fun library(onScreenChange: (ScreenType, Any?) -> Unit, loadingStatus: LoadingStatus, onLoadingStatusChange: (LoadingStatus) -> Unit) {
         val composableScope = rememberCoroutineScope()
-        var isLibraryLoaded by remember { mutableStateOf(digimonLibrary.isLoaded) }
-        if(!isLibraryLoaded) {
+        if(loadingStatus == LoadingStatus.UNINITIALIZED) {
             composableScope.launch {
                 digimonLibrary.initializeLibrary()
-                isLibraryLoaded = true
+                onLoadingStatusChange(LoadingStatus.INITIALIZED)
             }
             Text("Loading Library...", color = Color.White)
         } else {
@@ -71,4 +94,9 @@ class DigimonLibraryScreen(val digimonLibrary: DigimonLibrary, val capableOfAddi
         }
     }
 
+    enum class LoadingStatus {
+        UNINITIALIZED,
+        INITIALIZED,
+        RELOADING
+    }
 }

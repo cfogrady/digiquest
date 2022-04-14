@@ -37,14 +37,14 @@ class DigimonViewScreen(val spriteLoader: SpriteLoader, val digimonLibrary: Digi
                     }
                 }
                 Button(onClick = {
-                    onScreenChange(ScreenType.BATTLE, BattleScreen.BattleScreenParameters(ScreenType.VIEW_DIGIMON))
+                    onScreenChange(ScreenType.BATTLE_SETUP, BattleSetupScreen.BattleSetupScreenParameter(digimon, ScreenType.DIGIMON_LIBRARY))
                 }) {
                     Text("Battle")
                 }
             }
             val digimonName = digimon.name
             Screen.LabelText("Name: ", digimonName, modifier = Modifier.padding(10.dp))
-            spriteLoader.AsyncImage(spriteName = digimon.name.toLowerCase(Locale.current), credit = digimon.artCredit, contentDescription = "${digimon.name} art.")
+            spriteLoader.AsyncImage(spriteName = digimon.name, credit = digimon.artCredit, contentDescription = "${digimon.name} art.")
             Text(digimon.description, modifier = Modifier.padding(10.dp), color = MaterialTheme.colors.onBackground, fontSize = 12.sp)
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(horizontal = 10.dp, vertical = 0.dp).fillMaxWidth()) {
                 Screen.LabelText("Attribute: ", digimon.attribute.name, fontSize = 12.sp)
