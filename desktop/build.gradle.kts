@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
+    id("io.toolebox.git-versioner")
 }
 
 compose.desktop {
@@ -33,6 +34,12 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.22")
     testCompileOnly("org.projectlombok:lombok:1.18.22")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.22")
+}
+
+versioner {
+    pattern {
+        pattern = "%M.%m.%p(.%c-%h)"
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
